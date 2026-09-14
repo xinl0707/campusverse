@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusVerse · 双界校园</title>
+  <meta name="description" content="AI 驱动的大学体验：一半用来预演，一半认真去活。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===================== 顶部导航（透明→滚动后白底） ===================== -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <span class="nav-logo-en" data-site-name-en>CampusVerse</span>
+        <span class="nav-logo-dot">·</span>
+        <span class="nav-logo-cn" data-site-name-cn>双界校园</span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#hero">首页</a>
+        <a href="#parallel">平行界</a>
+        <a href="#reality">现实界</a>
+        <a href="/workbench/">工作台</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="打开菜单">☰</button>
+    </div>
+  </header>
+
+  <!-- ===================== Hero 首屏：深夜星空（平行界一侧的"夜"） ===================== -->
+  <section class="hero" id="hero">
+    <!-- 背景全部纯 CSS：星点层 + 三团渐变雾 + 底部"边界"光带 -->
+    <div class="hero-bg" aria-hidden="true">
+      <div class="stars stars-a"></div>
+      <div class="stars stars-b"></div>
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+      <div class="horizon"></div>
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-en" data-site-name-en>CampusVerse</p>
+      <h1 class="hero-cn" data-site-name-cn>双界校园</h1>
+      <!-- 标语打字机效果，文本来自 js/config.js 的 SITE_SLOGAN -->
+      <p class="hero-slogan"><span id="typewriter"></span><span class="caret" aria-hidden="true">|</span></p>
+      <a href="#parallel" class="btn-cta hero-cta">开始探索 ↓</a>
+    </div>
+
+    <div class="hero-scroll-hint" aria-hidden="true">⌄</div>
+  </section>
+
+  <!-- ===================== 一句话产品介绍 ===================== -->
+  <section class="intro">
+    <p class="intro-line reveal">
+      “每个大学生都该有两所大学——<br>
+      一所用来<b>预演</b>，一所认真去<b>活</b>。”
+    </p>
+  </section>
+
+  <!-- ===================== 平行界 · 预演未来（夜色延续区） ===================== -->
+  <section class="zone zone-parallel" id="parallel">
+    <div class="zone-head reveal">
+      <h2>🌌 平行界 · 预演未来</h2>
+      <p>自定义你的学校与专业，去另一条时间线，把四年重新走一遍。</p>
+    </div>
+
+    <!-- 主打模块：玻璃拟态通栏大卡片，卡内带作业本格暗纹（模拟器彩蛋） -->
+    <article class="card card-feature reveal">
+      <div class="card-band band-simulator"></div>
+      <div class="card-body">
+        <div class="card-icon">🎮</div>
+        <div class="card-text">
+          <h3>大学模拟器</h3>
+          <p class="card-tagline">AI 驱动的文字互动游戏，你的四年由你定义</p>
+          <ul class="card-points">
+            <li>每学期 6 次决策，24 个事件全部由 AI 实时生成</li>
+            <li>不选预设性格——用你的选择行为推断 MBTI</li>
+            <li>四维能力雷达图 + 毕业成长总结</li>
+          </ul>
+        </div>
+        <div class="card-action">
+          <button class="btn-cta enter-btn" data-module="simulator">进入模拟器</button>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ===================== 现实界 · 校园进行时（白天区） ===================== -->
+  <section class="zone zone-reality" id="reality">
+    <div class="zone-head reveal">
+      <h2>🏫 现实界 · 校园进行时</h2>
+      <p>已经身处这所大学？把每一天过得明白一点。</p>
+    </div>
+
+    <div class="card-grid">
+      <!-- 情绪地图 -->
+      <article class="card reveal">
+        <div class="card-band band-emotion"></div>
+        <div class="card-body card-body-col">
+          <div class="card-icon">🗺️</div>
+          <h3>情绪地图</h3>
+          <p class="card-tagline">把心情画在校园里</p>
+          <ul class="card-points">
+            <li>2D 校园地图，点一下地标记录心情</li>
+            <li>五级情绪 × 天气化呈现，晴天到暴风雨</li>
+            <li>AI 日总结 / 周总结 + 成就徽章</li>
+          </ul>
+          <div class="card-action">
+            <button class="btn-primary enter-btn" data-module="emotion">进入模块</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 课表排雷 -->
+      <article class="card reveal">
+        <div class="card-band band-schedule"></div>
+        <div class="card-body card-body-col">
+          <div class="card-icon">💣</div>
+          <h3>课表排雷</h3>
+          <p class="card-tagline">大学新生课表智能体检</p>
+          <ul class="card-points">
+            <li>单双周 / 短期开课自动识别</li>
+            <li>连续早八、晚间满课、睡眠透支预警</li>
+            <li>碎片空课分析 + 五维能力雷达图</li>
+          </ul>
+          <div class="card-action">
+            <button class="btn-primary enter-btn" data-module="schedule">进入模块</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 日记帮写 -->
+      <article class="card reveal">
+        <div class="card-band band-diary"></div>
+        <div class="card-body card-body-col">
+          <div class="card-icon">📝</div>
+          <h3>日记帮写</h3>
+          <p class="card-tagline">小度陪你记录每一天</p>
+          <ul class="card-points">
+            <li>随心情变化的动态天气背景</li>
+            <li>聊天式 AI 代写，灵感枯竭也能成文</li>
+            <li>一键导出 Markdown 日记</li>
+          </ul>
+          <div class="card-action">
+            <button class="btn-primary enter-btn" data-module="diary">进入模块</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== 一体化工作台入口（由合并 Agent 新增：白天 → 夜色的过渡带） ===================== -->
+  <section class="zone zone-workbench" id="workbench-cta">
+    <div class="wb-cta reveal">
+      <div class="wb-cta-text">
+        <h3>🧭 四合一工作台</h3>
+        <p>不想来回跳页？打开工作台，四个模块在同一个页面里横向切换，顶栏还能一键查看 AI 代理状态、全屏演示。</p>
+        <div class="wb-cta-chips">
+          <span>🎮 模拟器</span><span>🗺️ 情绪地图</span><span>💣 课表排雷</span><span>📝 日记帮写</span>
+        </div>
+      </div>
+      <div class="wb-cta-action">
+        <a class="btn-cta" href="/workbench/">进入工作台 →</a>
+        <p class="wb-cta-note">快捷键 Alt + 1~4 切换模块</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 页脚（回到夜色，双界闭环） ===================== -->
+  <footer class="footer">
+    <p class="footer-title">© 2026 <span data-site-name-en>CampusVerse</span> · <span data-site-name-cn>双界校园</span> · 黑客松项目</p>
+    <p class="footer-sub">团队信息占位 —— 四个 AI 模块：大学模拟器 / 情绪地图 / 课表排雷 / 日记帮写</p>
+  </footer>
+
+  <!-- 全局提示气泡（模块未接入等场景） -->
+  <div class="toast" id="toast" role="status"></div>
+
+  <!-- 脚本：config 在前，main 在后（body 结束前引入） -->
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大学模拟器 · 你的四年，由你定义</title>
+
+  <!-- 全局样式 -->
+  <link rel="stylesheet" href="../common/css/variables.css">
+  <link rel="stylesheet" href="../common/css/components.css">
+  <!-- 模拟器专用样式 -->
+  <link rel="stylesheet" href="css/sim-style.css?v=8">
+</head>
+
+<body>
+
+  <!-- ============ 全屏固定场景背景（position:fixed，不随滚动移动，永远铺满视口） ============ -->
+  <div id="fixed-bg" class="fixed-bg hidden">
+    <img id="full-scene-img" alt="场景背景">
+    <div class="fixed-bg-mask"></div>
+  </div>
+
+  <!-- ============ 欢迎页（录取通知书） ============ -->
+  <section id="screen-welcome" class="screen active">
+    <div class="notice-wrap">
+      <div class="notice">
+        <div class="notice-head">
+          <span class="notice-school">大学生活模拟器 · 教务处</span>
+          <span class="notice-no">No.2026-0913</span>
+        </div>
+        <div class="notice-body">
+          <p class="notice-kicker">CAMPUS LIFE SIMULATOR</p>
+          <h1 class="notice-title">大学录取通知书</h1>
+          <p class="notice-line">兹录取 <input class="input-field" id="inp-welcome-name" type="text" maxlength="20" placeholder="写下你的姓名">同学，于<span class="blank">九月</span> 秋季入学，请凭本通知完成四年学业。</p>
+          <div class="notice-meta">
+            <span>8 个学期</span><i>·</i><span>48 个关键节点</span><i>·</i><span>四维成长档案</span>
+          </div>
+        </div>
+        <div class="notice-perf"><span class="perf-notch left"></span><span class="perf-dots"></span><span class="perf-notch right"></span></div>
+        <div class="notice-stub">
+          <div class="stamp">新生<br>报到</div>
+          <div class="stub-actions">
+            <button class="btn-primary btn-lg" id="btn-start">📝 填写新生信息</button>
+            <button class="btn-secondary hidden" id="btn-continue">继续上次存档</button>
+          </div>
+          <p class="stub-note">本通知最终解释权归 AI 旁白所有</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 角色创建页 ============ -->
+  <section id="screen-create" class="screen">
+    <div class="container-narrow">
+      <div class="card create-card">
+        <h2 class="section-title">🎒 新生报到</h2>
+        <p class="section-sub">填写基本信息，AI 将为你生成专属的开学剧本</p>
+
+        <div class="form-grid">
+          <div class="form-item form-item-full">
+            <p class="section-sub" style="background: var(--surface-color); padding: 1rem; border-radius: 8px;">
+              👤 已填写姓名：<b id="display-welcome-name" style="color: var(--accent-color);"></b>
+              （在录取通知书页面已填写）
+            </p>
+          </div>
+
+          <div class="form-item">
+            <label>性别 <em>*</em></label>
+            <div class="chip-group" id="gender-group">
+              <button type="button" class="chip" data-value="男">男</button>
+              <button type="button" class="chip" data-value="女">女</button>
+              <button type="button" class="chip" data-value="其他">其他</button>
+            </div>
+          </div>
+
+          <div class="form-item">
+            <label for="inp-school">学校 <em>*</em></label>
+            <select class="input-field" id="sel-school"></select>
+            <input class="input-field hidden mt-8" id="inp-school" type="text" maxlength="30" placeholder="输入你的学校名称">
+          </div>
+
+          <div class="form-item">
+            <label for="inp-major">专业 <em>*</em></label>
+            <select class="input-field" id="sel-major"></select>
+            <input class="input-field hidden mt-8" id="inp-major" type="text" maxlength="30" placeholder="输入你的专业名称">
+          </div>
+
+          <div class="form-item form-item-full">
+            <label>自评 MBTI <em>*</em>（四个维度各选一个，结尾与你的实测性格对比）</label>
+            <div class="mbti-dims" id="mbti-dims"></div>
+            <p class="mbti-result" id="mbti-result">已选：<b id="mbti-result-text">····</b><span id="mbti-result-hint">（还差 4 项）</span></p>
+          </div>
+        </div>
+
+        <div class="create-actions">
+          <button class="btn-secondary" id="btn-back-welcome">返回</button>
+          <button class="btn-primary" id="btn-create-go">🎓 开启大学生活 →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 游戏主界面 ============ -->
+  <section id="screen-game" class="screen">
+    <div class="container">
+      <!-- 顶栏 -->
+      <header class="game-header">
+        <h1 class="game-title">🎓 大学模拟器</h1>
+        <div class="header-btns">
+          <button class="btn-mini" id="btn-save" title="保存进度">💾 保存</button>
+          <button class="btn-mini" id="btn-load" title="读取进度">📂 读取</button>
+          <button class="btn-mini btn-mini-danger" id="btn-restart" title="重新开始">🔄 重新开始</button>
+        </div>
+      </header>
+
+      <!-- 四维属性条（常驻） -->
+      <div class="stats-bar card" id="stats-bar"></div>
+
+      <!-- 已激活 buff 栏 -->
+      <div class="buff-bar hidden" id="buff-bar"></div>
+
+      <!-- 事件面板 -->
+      <div id="panel-event">
+        <!-- 事件信息行（纯文字：类别 / 地点 / 时间，替代原 emoji 色块徽章） -->
+        <p class="event-caption" id="event-caption"></p>
+
+        <div class="card scene-card">
+          <p class="scene-text" id="event-scene-text">正在为你生成剧情……</p>
+        </div>
+
+        <div class="options-list" id="options-list"></div>
+
+        <!-- 自定义输入区 -->
+        <div class="card custom-box hidden" id="custom-box">
+          <label class="custom-label" for="inp-custom">写下你自己的行动（50 字以内，基本都能通过，AI 只负责推演结果）</label>
+          <div class="custom-row">
+            <input class="input-field" id="inp-custom" type="text" maxlength="50" placeholder="例如：去操场跑三圈再回来">
+            <span class="custom-count" id="custom-count">0/50</span>
+            <button class="btn-primary" id="btn-custom-go">执行</button>
+            <button class="btn-secondary" id="btn-custom-cancel">取消</button>
+          </div>
+        </div>
+
+        <!-- 统一小游戏覆盖层（巅峰/低谷触发，8 个小游戏共用） -->
+        <div class="minigame-overlay hidden" id="minigame-overlay">
+          <div class="minigame-card card">
+            <!-- 顶部标题栏 -->
+            <div class="mg-header">
+              <div class="mg-title-wrap">
+                <span class="mg-badge" id="mg-badge"></span>
+                <h3 class="mg-title" id="mg-title"></h3>
+                <p class="mg-desc" id="mg-desc"></p>
+              </div>
+              <button class="mg-close" id="mg-close" type="button" title="跳过小游戏">×</button>
+            </div>
+
+            <!-- 三栏主体：左面板 / 中舞台 / 右面板 -->
+            <div class="mg-body">
+              <aside class="mg-panel mg-panel-left" id="mg-panel-left"></aside>
+              <div class="mg-stage" id="mg-stage"></div>
+              <aside class="mg-panel mg-panel-right" id="mg-panel-right"></aside>
+            </div>
+
+            <!-- 底部事件提示 + 评价 -->
+            <div class="mg-footer">
+              <div class="mg-event-tip" id="mg-event-tip">等待开始……</div>
+              <div class="mg-eval-wrap">
+                <span class="mg-eval-label" id="mg-eval-label">当前评价</span>
+                <div class="mg-eval-bar"><div class="mg-eval-fill" id="mg-eval-fill"></div></div>
+                <span class="mg-eval-text" id="mg-eval-text">准备中</span>
+              </div>
+            </div>
+
+            <!-- 结算面板 -->
+            <div class="mg-result hidden" id="mg-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 结果反馈面板 -->
+      <div id="panel-result" class="hidden">
+        <div class="card result-card">
+          <p class="result-label">— 选择的结果 —</p>
+          <p class="feedback-text" id="result-feedback"></p>
+          <div class="delta-grid" id="result-deltas"></div>
+        </div>
+        <div class="result-actions">
+          <button class="btn-primary btn-lg" id="btn-next-event">继续 →</button>
+        </div>
+      </div>
+
+      <!-- 加载遮罩 -->
+      <div id="game-loading" class="loading-overlay hidden">
+        <div class="loading"></div>
+        <p class="loading-text" id="loading-text">AI 正在构思剧情……</p>
+      </div>
+
+      <!-- 底部状态栏 -->
+      <footer class="game-footer">
+        <span class="semester-label" id="semester-label">大一上 · 第 1 个节点</span>
+        <span class="progress-dots" id="progress-dots"></span>
+        <span class="overall-label" id="overall-label">1 / 48</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- ============ 学期总结页（三列式：关键选择 | 雷达+变化 | AI 评语） ============ -->
+  <section id="screen-semester" class="screen">
+    <div class="container-wide">
+      <div class="page-head">
+        <p class="summary-kicker">SEMESTER REPORT</p>
+        <h2 class="section-title" id="semester-title">📋 学期总结</h2>
+      </div>
+
+      <div class="report-cols">
+        <div class="report-col">
+          <h3 class="sub-title">🗂️ 本学期关键选择</h3>
+          <ul class="recap-list" id="semester-recap"></ul>
+        </div>
+
+        <div class="report-col">
+          <h3 class="sub-title">📊 属性变化</h3>
+          <div class="radar-wrap"><canvas id="semester-radar" width="340" height="320"></canvas></div>
+          <div class="delta-list" id="semester-deltas"></div>
+        </div>
+
+        <div class="report-col">
+          <h3 class="sub-title">✍️ AI 学期评语</h3>
+          <div class="prose" id="semester-text"></div>
+        </div>
+      </div>
+
+      <div class="center-actions">
+        <button class="btn-primary btn-lg" id="btn-next-semester" disabled>
+          <span class="btn-inner">进入下学期 →</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 毕业总结页（三列式：性格画像 | 雷达+数值 | 去向+赠言） ============ -->
+  <section id="screen-final" class="screen">
+    <div class="container-wide">
+      <div class="diploma">
+        <div class="diploma-head">
+          <p class="diploma-kicker">GRADUATION REPORT · 2030</p>
+          <h2 class="diploma-title">🎓 毕业快乐！</h2>
+          <p class="diploma-name" id="final-name"></p>
+        </div>
+
+        <div class="report-cols">
+          <!-- 第一列：性格画像 -->
+          <div class="report-col">
+            <h3 class="sub-title">🪞 性格画像</h3>
+            <p class="mbti-big" id="final-mbti">
+              <span class="mbti-test" id="final-mbti-test">---- </span>
+              <span class="mbti-arrow">←</span>
+              <span class="mbti-self" id="final-mbti-self"></span>
+            </p>
+            <p class="mbti-legend">实测（基于行为） · 自评（开局填写）</p>
+            <div class="keyword-row" id="final-keywords"></div>
+            <p class="prose-sm" id="final-analysis"></p>
+            <div class="compare-box" id="final-compare"></div>
+          </div>
+
+          <!-- 第二列：雷达图 + 四维数值 -->
+          <div class="report-col">
+            <h3 class="sub-title">📊 四维能力雷达</h3>
+            <div class="radar-wrap">
+              <canvas id="final-radar" width="340" height="320"></canvas>
+            </div>
+            <div class="delta-list" id="final-stats"></div>
+          </div>
+
+          <!-- 第三列：毕业去向 + 临别赠言 -->
+          <div class="report-col">
+            <h3 class="sub-title">🧭 毕业去向</h3>
+            <p class="dest-big"><span id="final-dest-icon">🧭</span> <span id="final-destination"></span></p>
+            <p class="prose-sm" id="final-dest-desc"></p>
+            <h3 class="sub-title">🎓 临别赠言</h3>
+            <p class="prose" id="final-closing"></p>
+          </div>
+        </div>
+
+        <!-- 四年回忆手账（参考图风格：拍立得照片卡 + 每学年最佳选择） -->
+        <div class="memory-book">
+          <h3 class="memory-book-title">🎓 毕业快乐 · 四年回忆手账</h3>
+
+          <div class="memory-cards" id="memory-cards">
+            <!-- JS 填充四张学年卡片 -->
+          </div>
+
+          <div class="memory-timeline">
+            <div class="memory-timeline-line"></div>
+            <div class="memory-timeline-dots" id="memory-timeline-dots"></div>
+          </div>
+
+          <div class="memory-stats" id="memory-stats">
+            <!-- JS 填充毕业四维属性 -->
+          </div>
+
+          <div class="memory-comment">
+            <span class="memory-comment-label">结局评语</span>
+            <p class="memory-comment-text" id="memory-closing"></p>
+          </div>
+
+          <div class="memory-actions">
+            <button class="btn-primary btn-lg" id="btn-save-memory">💾 保存毕业回忆</button>
+          </div>
+        </div>
+
+        <!-- 成就徽章（网格铺满，单独一行） -->
+        <h3 class="sub-title">🏅 成就徽章</h3>
+        <div class="achv-list" id="final-achievements"></div>
+
+        <div class="center-actions">
+          <button class="btn-secondary" id="btn-copy-share">📋 复制分享文案</button>
+          <button class="btn-primary btn-lg" id="btn-again">🔄 再来一次</button>
+        </div>
+      </div>
+
+      <div id="final-loading" class="loading-overlay hidden">
+        <div class="loading"></div>
+        <p class="loading-text" id="final-loading-text">AI 正在撰写你的毕业报告……</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页面内确认框（不依赖浏览器原生 confirm，避免被拦截后按钮变死键） -->
+  <div id="confirm-mask" class="modal-mask hidden">
+    <div class="modal-box" role="dialog" aria-modal="true">
+      <p class="modal-text" id="confirm-text">确定吗？</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="confirm-cancel">取消</button>
+        <button class="btn-primary" id="confirm-ok">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 脚本引入（body 结束前） -->
+  <script src="../common/js/utils.js"></script>
+  <script src="../common/js/ai-proxy.js?v=3"></script>
+  <script src="js/game-engine.js?v=4"></script>
+  <script src="js/ai-service.js?v=6"></script>
+  <script src="js/app.js?v=7"></script>
+  <script src="js/mini-games.js?v=4"></script>
+</body>
+</html>

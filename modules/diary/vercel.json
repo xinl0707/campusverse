@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "tools/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "common/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/chat",
+      "dest": "/api/chat.js"
+    },
+    {
+      "src": "/common/(.*)",
+      "dest": "/common/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/tools/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/tools/index.html"
+    }
+  ]
+}

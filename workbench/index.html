@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>四合一工作台 · CampusVerse 双界校园</title>
+  <meta name="description" content="一个页面里跑完四个 AI 校园功能：大学模拟器 / 情绪地图 / 课表排雷 / 日记帮写。">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏫</text></svg>">
+  <link rel="stylesheet" href="workbench.css">
+</head>
+<body>
+
+  <!-- ===================== 顶部：品牌 + 状态 + 工具 ===================== -->
+  <header class="wb-header">
+    <div class="wb-brand">
+      <a class="wb-brand-home" href="/" target="_top" title="返回双界校园首页">
+        <span class="wb-brand-mark">🏫</span>
+        <span class="wb-brand-text">
+          <b>CampusVerse</b>
+          <i>双界校园 · 四合一工作台</i>
+        </span>
+      </a>
+    </div>
+
+    <div class="wb-tools">
+      <span class="wb-status" id="wbStatus" data-state="loading" title="正在检查 AI 代理状态">
+        <span class="wb-status-dot"></span><span class="wb-status-text">检查中…</span>
+      </span>
+      <button class="wb-btn" id="wbReload" type="button" title="重新加载当前模块（跳过缓存）">⟳ 刷新</button>
+      <button class="wb-btn" id="wbNewWindow" type="button" title="在新窗口打开当前模块">⧉ 新窗口</button>
+      <button class="wb-btn" id="wbFullscreen" type="button" title="全屏演示">⛶ 全屏</button>
+    </div>
+  </header>
+
+  <!-- ===================== 标签栏：四个模块 ===================== -->
+  <nav class="wb-tabs" id="wbTabs" role="tablist" aria-label="模块切换">
+    <button class="wb-tab" type="button" role="tab" data-key="simulator" data-accent="simulator">
+      <span class="wb-tab-icon">🎮</span>
+      <span class="wb-tab-body">
+        <b>大学模拟器</b>
+        <i>预演你的四年</i>
+      </span>
+    </button>
+    <button class="wb-tab" type="button" role="tab" data-key="emotion" data-accent="emotion">
+      <span class="wb-tab-icon">🗺️</span>
+      <span class="wb-tab-body">
+        <b>情绪地图</b>
+        <i>把心情画在校园里</i>
+      </span>
+    </button>
+    <button class="wb-tab" type="button" role="tab" data-key="schedule" data-accent="schedule">
+      <span class="wb-tab-icon">💣</span>
+      <span class="wb-tab-body">
+        <b>课表排雷</b>
+        <i>课表智能体检</i>
+      </span>
+    </button>
+    <button class="wb-tab" type="button" role="tab" data-key="diary" data-accent="diary">
+      <span class="wb-tab-icon">📝</span>
+      <span class="wb-tab-body">
+        <b>日记帮写</b>
+        <i>小度陪你记录每一天</i>
+      </span>
+    </button>
+  </nav>
+
+  <!-- ===================== 舞台：iframe 承载当前模块 ===================== -->
+  <main class="wb-stage">
+    <div class="wb-frame-wrap">
+      <iframe
+        id="wbFrame"
+        class="wb-frame"
+        title="模块内容"
+        allow="autoplay; clipboard-write; fullscreen"
+        referrerpolicy="same-origin"></iframe>
+
+      <!-- 加载遮罩（模块首屏渲染完自动淡出） -->
+      <div class="wb-loading" id="wbLoading">
+        <div class="wb-loading-inner">
+          <div class="wb-spinner"></div>
+          <p class="wb-loading-title" id="wbLoadingTitle">正在进入模块…</p>
+          <p class="wb-loading-sub">四个模块共用同一个服务器与同一个 AI 代理</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 键盘快捷键提示 -->
+  <div class="wb-hint" id="wbHint">快捷键 Alt + 1 / 2 / 3 / 4 切换模块 · 点右上角 ⛶ 可全屏演示</div>
+
+  <script src="workbench.js"></script>
+</body>
+</html>

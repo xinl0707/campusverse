@@ -1,0 +1,368 @@
+{
+  "balanced": [
+    [
+      {
+        "energy": -10,
+        "study": 10,
+        "social": 5,
+        "mental": -8
+      },
+      {
+        "energy": -5,
+        "study": 5,
+        "social": -8,
+        "mental": 5
+      },
+      {
+        "energy": 0,
+        "study": -5,
+        "social": -10,
+        "mental": -15
+      }
+    ],
+    [
+      {
+        "energy": -8,
+        "study": -2,
+        "social": 8,
+        "mental": 5
+      },
+      {
+        "energy": -10,
+        "study": 0,
+        "social": -5,
+        "mental": -3
+      },
+      {
+        "energy": 8,
+        "study": -3,
+        "social": 0,
+        "mental": 6
+      }
+    ],
+    [
+      {
+        "energy": -10,
+        "study": -5,
+        "social": 15,
+        "mental": 5
+      },
+      {
+        "energy": 10,
+        "study": 0,
+        "social": -8,
+        "mental": 5
+      },
+      {
+        "energy": -5,
+        "study": 5,
+        "social": 5,
+        "mental": -5
+      }
+    ],
+    [
+      {
+        "energy": -12,
+        "study": -5,
+        "social": 8,
+        "mental": 5
+      },
+      {
+        "energy": 2,
+        "study": 5,
+        "social": -8,
+        "mental": -5
+      },
+      {
+        "energy": 6,
+        "study": 3,
+        "social": -6,
+        "mental": 2
+      }
+    ],
+    [
+      {
+        "energy": -15,
+        "study": -5,
+        "social": 8,
+        "mental": 5
+      },
+      {
+        "energy": -8,
+        "study": 10,
+        "social": -5,
+        "mental": -2
+      },
+      {
+        "energy": 8,
+        "study": -3,
+        "social": -8,
+        "mental": 6
+      }
+    ],
+    [
+      {
+        "energy": -10,
+        "study": 8,
+        "social": -5,
+        "mental": -8
+      },
+      {
+        "energy": -5,
+        "study": 12,
+        "social": -10,
+        "mental": 2
+      },
+      {
+        "energy": 10,
+        "study": -8,
+        "social": -5,
+        "mental": 5
+      }
+    ]
+  ],
+  "high": [
+    [
+      {
+        "energy": -5,
+        "study": 6,
+        "social": -8,
+        "mental": -7
+      },
+      {
+        "energy": -12,
+        "study": 8,
+        "social": -3,
+        "mental": -6
+      },
+      {
+        "energy": 8,
+        "study": 0,
+        "social": -2,
+        "mental": 3
+      }
+    ],
+    [
+      {
+        "energy": -12,
+        "study": -3,
+        "social": 6,
+        "mental": -7
+      },
+      {
+        "energy": -8,
+        "study": 2,
+        "social": -6,
+        "mental": 3
+      },
+      {
+        "energy": 8,
+        "study": -2,
+        "social": -3,
+        "mental": 5
+      }
+    ],
+    [
+      {
+        "energy": -10,
+        "study": -2,
+        "social": 5,
+        "mental": -8
+      },
+      {
+        "energy": -8,
+        "study": 0,
+        "social": 4,
+        "mental": 3
+      },
+      {
+        "energy": 15,
+        "study": -5,
+        "social": -6,
+        "mental": 8
+      }
+    ],
+    [
+      {
+        "energy": -12,
+        "study": 3,
+        "social": 6,
+        "mental": -8
+      },
+      {
+        "energy": 8,
+        "study": 0,
+        "social": -6,
+        "mental": 2
+      },
+      {
+        "energy": -10,
+        "study": -3,
+        "social": 4,
+        "mental": 5
+      }
+    ],
+    [
+      {
+        "energy": -8,
+        "study": -3,
+        "social": 7,
+        "mental": -5
+      },
+      {
+        "energy": -3,
+        "study": -2,
+        "social": 2,
+        "mental": -8
+      },
+      {
+        "energy": 8,
+        "study": -5,
+        "social": -6,
+        "mental": 10
+      }
+    ],
+    [
+      {
+        "energy": -12,
+        "study": 8,
+        "social": 3,
+        "mental": -7
+      },
+      {
+        "energy": 8,
+        "study": -3,
+        "social": -6,
+        "mental": 5
+      },
+      {
+        "energy": -8,
+        "study": 5,
+        "social": 2,
+        "mental": -2
+      }
+    ]
+  ],
+  "veryHigh": [
+    [
+      {
+        "energy": -10,
+        "study": 5,
+        "social": -5,
+        "mental": -8
+      },
+      {
+        "energy": -8,
+        "study": 3,
+        "social": 7,
+        "mental": -6
+      },
+      {
+        "energy": -15,
+        "study": 2,
+        "social": 2,
+        "mental": -12
+      }
+    ],
+    [
+      {
+        "energy": -12,
+        "study": -5,
+        "social": 8,
+        "mental": 7
+      },
+      {
+        "energy": -8,
+        "study": 0,
+        "social": -6,
+        "mental": 4
+      },
+      {
+        "energy": 10,
+        "study": 0,
+        "social": -3,
+        "mental": 2
+      }
+    ],
+    [
+      {
+        "energy": -8,
+        "study": -7,
+        "social": 12,
+        "mental": 5
+      },
+      {
+        "energy": 0,
+        "study": 5,
+        "social": -6,
+        "mental": -8
+      },
+      {
+        "energy": -5,
+        "study": -3,
+        "social": -5,
+        "mental": -10
+      }
+    ],
+    [
+      {
+        "energy": 8,
+        "study": -1,
+        "social": -6,
+        "mental": -2
+      },
+      {
+        "energy": -5,
+        "study": -4,
+        "social": 7,
+        "mental": -6
+      },
+      {
+        "energy": -8,
+        "study": 0,
+        "social": -7,
+        "mental": -5
+      }
+    ],
+    [
+      {
+        "energy": 12,
+        "study": -8,
+        "social": -6,
+        "mental": 5
+      },
+      {
+        "energy": -10,
+        "study": -7,
+        "social": 8,
+        "mental": -5
+      },
+      {
+        "energy": -5,
+        "study": 3,
+        "social": -7,
+        "mental": -6
+      }
+    ],
+    [
+      {
+        "energy": -15,
+        "study": 5,
+        "social": 3,
+        "mental": -8
+      },
+      {
+        "energy": 8,
+        "study": -2,
+        "social": -6,
+        "mental": 2
+      },
+      {
+        "energy": -5,
+        "study": -4,
+        "social": 6,
+        "mental": -3
+      }
+    ]
+  ]
+}

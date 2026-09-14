@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>情绪地图 - 校园心情记录</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
+
+  <!-- 全局样式（v 为缓存穿透版本号，发版时改这里） -->
+  <link rel="stylesheet" href="../../common/css/variables.css?v=20260912b">
+  <link rel="stylesheet" href="../../common/css/components.css?v=20260912b">
+  <!-- 情绪模块专用样式 -->
+  <link rel="stylesheet" href="css/emotion-style.css?v=20260912b">
+</head>
+<body>
+
+  <!-- ========== 开场动画 ========== -->
+  <div class="intro-overlay" id="intro-overlay">
+    <!-- 柔和光斑 -->
+    <div class="intro-bg">
+      <span class="intro-blob blob-1"></span>
+      <span class="intro-blob blob-2"></span>
+      <span class="intro-blob blob-3"></span>
+    </div>
+
+    <div class="intro-content">
+      <!-- 定位标记（纯 SVG 线条绘制） -->
+      <div class="intro-mark">
+        <span class="intro-ring ring-1"></span>
+        <span class="intro-ring ring-2"></span>
+        <span class="intro-ring ring-3"></span>
+
+        <svg class="intro-svg" viewBox="0 0 120 140" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="introPinGrad" x1="18" y1="18" x2="102" y2="120" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FFC49B"/>
+              <stop offset="52%" stop-color="#FF9A9E"/>
+              <stop offset="100%" stop-color="#F2708F"/>
+            </linearGradient>
+            <linearGradient id="introHeartGrad" x1="44" y1="33" x2="76" y2="68" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FFA98C"/>
+              <stop offset="100%" stop-color="#EE6C8A"/>
+            </linearGradient>
+          </defs>
+
+          <!-- 外轮廓：定位针 -->
+          <path class="intro-pin"
+                d="M60 132 C60 132 20 86 20 55 A40 40 0 1 1 100 55 C100 86 60 132 60 132 Z"
+                stroke="url(#introPinGrad)" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- 内圈 -->
+          <circle class="intro-pin-inner" cx="60" cy="55" r="20"
+                  stroke="url(#introPinGrad)" stroke-width="2.5"/>
+
+          <!-- 心形 -->
+          <path class="intro-heart"
+                d="M60 68.5 C60 68.5 44.5 56.5 44.5 46.6 C44.5 39.2 50 33.6 55.8 33.6 C58.2 33.6 60 35.7 60 37.6 C60 35.7 61.8 33.6 64.2 33.6 C70 33.6 75.5 39.2 75.5 46.6 C75.5 56.5 60 68.5 60 68.5 Z"
+                fill="url(#introHeartGrad)"/>
+        </svg>
+      </div>
+
+      <!-- 标题：逐字浮现 -->
+      <h2 class="intro-title">
+        <span>校</span><span>园</span><span>情</span><span>绪</span><span>地</span><span>图</span>
+      </h2>
+
+      <p class="intro-subtitle">记录你在校园每个角落的心情</p>
+
+      <!-- 进度线 -->
+      <div class="intro-progress"><span></span></div>
+    </div>
+
+    <div class="intro-skip">轻触跳过</div>
+  </div>
+
+  <div class="app-container">
+    <!-- 顶部标题区 -->
+    <header class="app-header">
+      <h1 class="app-title">
+        <span class="title-emoji">🗺️</span>
+        <span class="title-text">校园情绪地图</span>
+      </h1>
+      <p class="app-subtitle">记录你在校园每个角落的心情 ♡</p>
+    </header>
+
+    <!-- 测试工具栏 -->
+    <div id="test-tools"></div>
+
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-tab="map">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">情绪地图</span>
+      </button>
+      <button class="nav-btn" data-tab="timeline">
+        <span class="nav-icon">🕐</span>
+        <span class="nav-label">时间轴</span>
+      </button>
+      <button class="nav-btn" data-tab="diary">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">情绪回忆录</span>
+      </button>
+      <button class="nav-btn" data-tab="wall">
+        <span class="nav-icon">🎭</span>
+        <span class="nav-label">表情墙</span>
+      </button>
+      <button class="nav-btn" data-tab="achievements">
+        <span class="nav-icon">🏆</span>
+        <span class="nav-label">成就</span>
+      </button>
+    </nav>
+
+    <!-- ========== 标签页：情绪地图 ========== -->
+    <div class="tab-content" id="tab-map" style="display: block;">
+      <div class="map-section">
+        <div class="map-toolbar">
+          <button class="btn-add-location" id="add-location-btn">
+            <span>📍</span>
+            <span>添加地点</span>
+          </button>
+        </div>
+        <div class="map-wrapper">
+          <!-- 地图舞台：缩放控件与提示以此层定位 -->
+          <div class="map-stage">
+            <div id="map-container"></div>
+
+            <!-- 缩放控件 -->
+            <div class="map-zoom-controls">
+              <button class="map-zoom-btn" id="map-zoom-in" title="放大">＋</button>
+              <button class="map-zoom-btn" id="map-zoom-out" title="缩小">－</button>
+              <button class="map-zoom-btn" id="map-zoom-reset" title="重置视图">⟲</button>
+            </div>
+
+            <!-- 操作提示（按设备切换文案） -->
+            <div class="map-hint">
+              <span class="hint-desktop">🖱️ 滚轮缩放 · 拖拽平移 · 点击地点记录心情</span>
+              <span class="hint-mobile">👆 双指缩放 · 拖动平移 · 点击地点记录心情</span>
+            </div>
+          </div>
+
+          <!-- 心情图例（桌面端浮在地图上，手机端落到地图下方） -->
+          <div class="map-legend" id="map-legend"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 标签页：时间轴 ========== -->
+    <div class="tab-content" id="tab-timeline" style="display: none;">
+      <div id="timeline-section"></div>
+    </div>
+
+    <!-- ========== 标签页：情绪回忆录 ========== -->
+    <div class="tab-content" id="tab-diary" style="display: none;">
+      <div class="diary-section">
+        <div class="section-title-bar">
+          <span>📖</span> 情绪回忆录
+        </div>
+        <div class="diary-charts">
+          <div id="weekly-trend-chart"></div>
+          <div class="diary-charts-row">
+            <div id="today-distribution"></div>
+            <div id="location-comparison"></div>
+          </div>
+        </div>
+        <div class="diary-actions">
+          <button class="btn-campus btn-campus-primary" id="generate-daily-btn">📅 生成今日总结</button>
+          <button class="btn-campus btn-campus-secondary" id="generate-weekly-btn">📊 生成本周总结</button>
+        </div>
+        <div id="daily-summary-display"></div>
+        <div id="weekly-summary-display"></div>
+      </div>
+    </div>
+
+    <!-- ========== 标签页：表情墙 ========== -->
+    <div class="tab-content" id="tab-wall" style="display: none;">
+      <div id="expression-wall-section"></div>
+    </div>
+
+    <!-- ========== 标签页：成就 ========== -->
+    <div class="tab-content" id="tab-achievements" style="display: none;">
+      <div id="achievements-section"></div>
+    </div>
+
+    <!-- 底部装饰 -->
+    <footer class="app-footer">
+      <span>🏫</span> AI 校园情绪地图 · 记录美好青春 <span>🏫</span>
+    </footer>
+  </div>
+
+  <!-- 情绪记录侧边面板 -->
+  <div id="emotion-panel"></div>
+
+  <!-- 地点管理模态框 -->
+  <div id="location-modal" class="modal-overlay"></div>
+
+  <!-- 情绪记录成功弹窗 -->
+  <div id="emotion-celebrate" class="celebrate-overlay">
+    <div class="celebrate-card">
+      <div class="celebrate-emoji" id="celebrate-emoji">😊</div>
+      <div class="celebrate-title" id="celebrate-title">心情已记录！</div>
+      <div class="celebrate-weather" id="celebrate-weather">☀️ 今天是晴天哦</div>
+      <div class="celebrate-location" id="celebrate-location">📍 教学楼</div>
+      <div class="celebrate-particles" id="celebrate-particles"></div>
+      <div class="celebrate-close-hint">点击任意位置关闭</div>
+    </div>
+  </div>
+
+  <!-- 成就解锁弹窗 -->
+  <div id="achievement-unlock" class="ach-unlock-overlay">
+    <div class="ach-unlock-stage">
+      <!-- 旋转光芒 -->
+      <div class="ach-rays"></div>
+      <div class="ach-rays ach-rays-2"></div>
+
+      <!-- 批量解锁进度：第几个 / 共几个 -->
+      <div class="ach-unlock-counter" id="ach-unlock-counter"></div>
+
+      <!-- 徽章 -->
+      <div class="ach-badge-wrap">
+        <div class="ach-badge" id="ach-badge-icon">🏆</div>
+        <div class="ach-badge-shine"></div>
+      </div>
+
+      <!-- 文案 -->
+      <div class="ach-unlock-label">成就解锁</div>
+      <div class="ach-unlock-name" id="ach-unlock-name">初次记录</div>
+      <div class="ach-unlock-desc" id="ach-unlock-desc">完成第一次情绪记录</div>
+
+      <!-- 粒子容器 -->
+      <div class="ach-particles" id="ach-particles"></div>
+
+      <div class="ach-unlock-hint">点击任意位置继续</div>
+    </div>
+  </div>
+
+  <!-- 温暖安慰弹幕（记录低落/焦虑时触发） -->
+  <div class="comfort-overlay" id="comfort-overlay">
+    <div class="comfort-field" id="comfort-field"></div>
+    <div class="comfort-greeting" id="comfort-greeting">今天辛苦了，这份小礼物送给你</div>
+    <div class="comfort-footer" id="comfort-footer">这份心意，正在为你打包…</div>
+  </div>
+
+  <!-- 安慰收尾特效：爱心 + 华丽粒子 -->
+  <canvas id="comfort-finale" class="comfort-finale"></canvas>
+  <div class="finale-text" id="finale-text">你值得被温柔对待</div>
+
+  <!-- 脚本引入（v 为缓存穿透版本号，发版时改这里） -->
+  <script src="js/comfort-finale.js?v=20260912b"></script>
+  <script src="js/intro.js?v=20260912b"></script>
+  <script src="../../common/js/utils.js?v=20260912b"></script>
+  <script src="../../common/js/ai-proxy.js?v=20260912b"></script>
+  <script src="js/map.js?v=20260912b"></script>
+  <script src="js/emotion-recorder.js?v=20260912b"></script>
+  <script src="js/location-manager.js?v=20260912b"></script>
+  <script src="js/charts.js?v=20260912b"></script>
+  <script src="js/diary.js?v=20260912b"></script>
+  <script src="js/timeline.js?v=20260912b"></script>
+  <script src="js/expression-wall.js?v=20260912b"></script>
+  <script src="js/achievements.js?v=20260912b"></script>
+  <script src="js/comfort.js?v=20260912b"></script>
+  <script src="js/test-tools.js?v=20260912b"></script>
+  <script src="js/app.js?v=20260912b"></script>
+</body>
+</html>

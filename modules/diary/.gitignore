@@ -1,0 +1,28 @@
+# 敏感信息
+.env
+
+# 依赖
+node_modules/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.vscode/
+.idea/
+
+# Qoder 工具目录
+.qoder/
+
+# 测试文件夹
+tools/assets/audio/test-cloudy/
+
+# 测试截图
+test-*.png
+docs/test-screenshots/
+
+# 根目录临时文件
+*.wav
+!tools/assets/audio/*.wav
+日记_*.md

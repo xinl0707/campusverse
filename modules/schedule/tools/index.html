@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>课表智能分析系统 - 大学新生指南</title>
+
+  <!-- 全局样式 -->
+  <link rel="stylesheet" href="../common/css/variables.css">
+  <link rel="stylesheet" href="../common/css/components.css">
+
+  <!-- 工具专用样式 -->
+  <link rel="stylesheet" href="css/tool-style.css">
+
+  <!-- Chart.js 用于图表渲染（合并部署：改为本地文件，离线演示不再依赖 CDN） -->
+  <script src="js/vendor/chart.umd.min.js"></script>
+</head>
+<body class="bg-body">
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container navbar-content">
+      <a href="#" class="navbar-brand">
+        📚 课表智能分析
+      </a>
+    </div>
+  </nav>
+
+  <!-- 主容器 -->
+  <main class="container-fluid">
+    <!-- 头部区域 -->
+    <section class="toolbar" style="margin-top: 24px;">
+      <div>
+        <h1 style="font-size: var(--font-size-2xl); margin-bottom: 8px;">🎓 大学新生课表智能分析系统</h1>
+        <p style="color: var(--text-sub); font-size: var(--font-size-base);">
+          智能识别特殊上课模式、作息风险，助你科学规划大学生涯
+        </p>
+      </div>
+    </section>
+
+    <!-- 上传区域 -->
+<section id="upload" class="card" style="margin-bottom: 24px;">
+  <div class="card-header">
+    <div class="card-title">📤 上传课表方式</div>
+  </div>
+  <div id="uploadGrid" class="grid grid-cols-3 upload-grid" style="gap: 24px;">
+    <!-- ① ICS 日历上传 -->
+    <div class="file-upload">
+      <input type="file" id="icsUpload" accept=".ics,.calendar" class="file-upload-input">
+      <label for="icsUpload" class="file-upload-label up-card">
+        <div class="file-upload-icon">📅</div>
+        <div class="file-upload-text">上传 ICS 日历</div>
+        <div class="file-upload-hint">从 Outlook/Google Calendar 导出</div>
+      </label>
+    </div>
+
+    <!-- ② WebCal 订阅链接：和左右两张保持一致的图标 + 标题 + 说明结构，只是多了输入框和按钮 -->
+    <div class="file-upload up-card up-card-webcal">
+      <div class="file-upload-icon">🔗</div>
+      <div class="file-upload-text">导入订阅链接</div>
+      <div class="file-upload-hint">HDU、Gmail 等通用</div>
+      <input type="url" id="webcalUrl" placeholder="粘贴订阅链接..." class="input-field webcal-input">
+      <button id="webcalImportBtn" class="btn btn-primary webcal-btn">导入课表</button>
+    </div>
+
+    <!-- ③ 图片识别 -->
+    <div class="file-upload">
+      <input type="file" id="imageUpload" accept="image/jpeg,image/jpg,image/png,image/webp" class="file-upload-input">
+      <label for="imageUpload" class="file-upload-label up-card">
+        <div class="file-upload-icon">🖼️</div>
+        <div class="file-upload-text">图片识别课表</div>
+        <div class="file-upload-hint">JPG/PNG，AI 自动提取</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 加载进度条：图片识别动辄二三十秒，没有反馈的话大家会以为页面卡死又点一次 -->
+  <div id="busyBar" class="busy-bar" hidden>
+    <div class="busy-row">
+      <span class="busy-text" id="busyText">处理中…</span>
+      <span class="busy-meta" id="busyMeta">0%</span>
+    </div>
+    <div class="busy-track"><div class="busy-fill" id="busyFill"></div></div>
+  </div>
+</section>
+
+<!-- 统计数据 -->
+<section class="toolbar" style="flex-wrap: wrap;">
+  <div class="grid grid-cols-4" style="gap: 16px; width: 100%;">
+    <div class="stat-card">
+      <div class="stat-value" id="totalHours">0.0h</div>
+      <div class="stat-label">每周课时</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="totalHoursAll">0h</div>
+      <div class="stat-label">学期总课时</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="totalCourses">0</div>
+      <div class="stat-label">课程数量</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="totalSessions">0</div>
+      <div class="stat-label">每周节次</div>
+    </div>
+  </div>
+</section>
+
+<!-- 操作按钮：四等分铺满整行 -->
+<section class="action-bar">
+  <button id="addCourseBtn" class="btn btn-success act-btn">
+    ➕ 手动添加课程
+  </button>
+  <button id="analyzeBtn" class="btn btn-primary act-btn">
+    📊 分析当前课表
+  </button>
+  <button id="exportBtn" class="btn btn-secondary act-btn">
+    💾 导出数据
+  </button>
+  <button id="clearBtn" class="btn btn-danger act-btn">
+    🗑️ 清空数据
+  </button>
+</section>
+
+    <!-- 分析报告弹窗（点击「分析当前课表」后弹出：课表 → 建议 → 雷达图） -->
+    <div id="analysisModal" class="modal-overlay">
+      <div class="modal an-modal">
+        <div class="modal-header an-head">
+          <div class="modal-title">📊 课表分析报告</div>
+          <div class="an-head-actions">
+            <a class="an-jump" href="#anRadar">雷达图 ↓</a>
+            <button class="modal-close" onclick="hideModal('analysisModal')">&times;</button>
+          </div>
+        </div>
+        <div class="modal-body an-body">
+          <div id="analysisSummary" class="an-summary"></div>
+          <div id="analysisGrid" class="an-grid"></div>
+          <div id="analysisAdvice" class="an-advice"></div>
+          <div id="anRadar" class="an-radar">
+            <div class="an-radar-title">📊 五维体检雷达<span>越靠外压力越大</span></div>
+            <div id="analysisRadar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 手动添加课程模态框（整周时间轴方式） -->
+    <div id="addCourseModal" class="modal-overlay">
+      <div class="modal" style="max-width: 900px;">
+        <div class="modal-header">
+          <div class="modal-title">➕ 手动添加课程（点击时间段添加）</div>
+          <button class="modal-close" onclick="hideModal('addCourseModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="color: var(--text-sub); margin-bottom: 16px;">
+            💡 <strong>使用方法：</strong> 在下方课表中点击任意空白时间段，即可添加课程
+          </p>
+
+          <!-- 一周课表可视化 -->
+          <div id="manualAddScheduleView" style="overflow-x: auto; margin-bottom: 16px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="background: #f5f5f5;">
+                  <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">时间 \ 星期</th>
+                  <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">周一</th>
+                  <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">周二</th>
+                  <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">周三</th>
+                  <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">周四</th>
+                  <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">周五</th>
+                  <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">周六</th>
+                  <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">周日</th>
+                </tr>
+              </thead>
+              <tbody id="manualScheduleBody">
+                <!-- 动态生成时间格 -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 添加课程表单 -->
+          <div id="addCourseFormContainer" style="display: none; border-top: 1px solid var(--border); padding-top: 16px;">
+            <h4 style="margin-bottom: 12px;">✏️ 填写课程信息</h4>
+            <form id="courseForm">
+              <input type="hidden" id="tempAddedDay">
+              <input type="hidden" id="tempAddedStart">
+              <input type="hidden" id="tempAddedEnd">
+
+              <div id="selectedSlotHint" style="margin-bottom: 12px; padding: 8px 12px; background: #eef2ff; border-left: 3px solid var(--primary-color, #667eea); border-radius: 4px; font-size: 13px; font-weight: 600; color: #4c5bd4;"></div>
+
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 500;">课程名称 *</label>
+                <input type="text" id="courseName" class="input-field" required placeholder="例如：高等数学">
+              </div>
+
+              <div class="grid grid-cols-3" style="gap: 12px; margin-bottom: 12px;">
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-weight: 500;">星期</label>
+                  <select id="courseDay" class="input-field"></select>
+                </div>
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-weight: 500;">学分 <span style="font-weight:400;color:#98a0b6;font-size:12px;">选填，用于学业权重</span></label>
+                  <input type="number" id="courseCredits" class="input-field" placeholder="4" min="1" max="10">
+                </div>
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-weight: 500;">周次类型</label>
+                  <select id="courseWeekType" class="input-field">
+                    <option value="每周">每周</option>
+                    <option value="单周">单周</option>
+                    <option value="双周">双周</option>
+                    <option value="隔周">隔周</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2" style="gap: 12px; margin-bottom: 12px;">
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-weight: 500;">开始时间</label>
+                  <input type="time" id="courseStartTime" class="input-field" required>
+                </div>
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-weight: 500;">结束时间</label>
+                  <input type="time" id="courseEndTime" class="input-field" required>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 500;">教室地点</label>
+                <input type="text" id="courseLocation" class="input-field" placeholder="例如：A101">
+              </div>
+
+              <div class="grid grid-cols-2" style="gap: 12px; margin-bottom: 16px;">
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-weight: 500;">起始周</label>
+                  <input type="number" id="courseStartWeek" class="input-field" value="1" min="1" max="20">
+                </div>
+                <div>
+                  <label style="display: block; margin-bottom: 6px; font-weight: 500;">持续周数</label>
+                  <input type="number" id="courseDuration" class="input-field" value="16" min="1" max="20">
+                </div>
+              </div>
+
+              <div class="flex justify-between">
+                <button type="button" class="btn btn-secondary" onclick="cancelAdding()">取消</button>
+                <button type="submit" class="btn btn-primary">确认添加</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 课表智能分析系统 | Powered by AI</p>
+    </div>
+  </footer>
+
+  <!-- 脚本引入 -->
+  <script src="../common/js/utils.js"></script>
+  <script src="../common/js/ai-proxy.js"></script>
+  <script src="js/modules/schedule.js"></script>
+  <script src="js/modules/analysis.js"></script>
+  <script src="js/modules/viz.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# 依赖
+node_modules/
+package-lock.json
+
+# 密钥
+.env
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 运行时日志
+*.log
+server.log

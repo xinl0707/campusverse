@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>课表解析器测试</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto; }
+    .test-section { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+    .test-section h3 { margin-top: 0; color: #333; }
+    input[type="text"], textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; }
+    button { padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
+    button:hover { background: #5a67d8; }
+    .output { background: #f5f5f5; padding: 10px; border-radius: 4px; margin-top: 10px; white-space: pre-wrap; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto; }
+    .success { color: green; }
+    .error { color: red; }
+    .warning { color: orange; }
+  </style>
+</head>
+<body>
+  <h1>🧪 课表解析器测试工具</h1>
+
+  <!-- URL 验证测试 -->
+  <div class="test-section">
+    <h3>1️⃣ URL 验证测试</h3>
+    <input type="text" id="urlInput" placeholder="输入 URL 地址进行验证..."
+           value="https://neo.hduhelp.com/hduhelp-neo/feed/schedule?token=77a5da8ce3aee1482dc01bf7065f86a2f5014d76c17ad714a6f71f716b43daf4">
+    <button onclick="testURLValidation()">测试 URL 验证</button>
+    <div id="urlResult" class="output"></div>
+  </div>
+
+  <!-- ICS 内容解析测试 -->
+  <div class="test-section">
+    <h3>2️⃣ ICS 内容解析测试</h3>
+    <textarea id="icsInput" rows="10" placeholder="粘贴 ICS 内容..."></textarea>
+    <button onclick="testICSParser()">解析 ICS 内容</button>
+    <button onclick="loadHDUSample()" style="background: #4caf50;">加载 HDU 示例数据</button>
+    <div id="icsResult" class="output"></div>
+  </div>
+
+  <!-- 完整流程测试 -->
+  <div class="test-section">
+    <h3>3️⃣ 完整流程测试 (模拟 WebCal 导入)</h3>
+    <p>此测试会模拟完整的 WebCal 导入流程，包括 URL 验证、fetch 获取、ICS 解析和表格显示</p>
+    <input type="text" id="fullUrlInput" placeholder="输入 WebCal 订阅链接..."
+           value="https://neo.hduhelp.com/hduhelp-neo/feed/schedule?token=77a5da8ce3aee1482dc01bf7065f86a2f5014d76c17ad714a6f71f716b43daf4">
+    <button onclick="runFullTest()">运行完整测试</button>
+    <button onclick="clearResults()" style="background: #999;">清空结果</button>
+    <div id="fullResult" class="output"></div>
+  </div>
+
+  <!-- JavaScript 测试代码 -->
+  <script src="./common/js/utils.js"></script>
+  <script src="./tools/js/modules/schedule.js"></script>
+  <script>
+    // URL 验证测试
+    function testURLValidation() {
+      const url = document.getElementById('urlInput').value.trim();
+      const resultDiv = document.getElementById('urlResult');
+
+      if (!url) {
+        resultDiv.innerHTML = '<span class="error">❌ 请输入 URL</span>';
+        return;
+      }
+
+      const isValid = isValidURL(url);
+      resultDiv.innerHTML = `
+        <strong>输入的 URL:</strong> ${url}
+        <br><br>
+        <strong>验证结果:</strong>
+        ${isValid ? '<span class="success">✅ 有效</span>' : '<span class="error">❌ 无效</span>'}
+        <br><br>
+        <strong>处理后的 URL:</strong> ${ensureProtocol(url)}
+        <br><br>
+        <strong>原始值测试:</strong> ${checkUrlDirectly(url)}
+      `;
+    }
+
+    function ensureProtocol(url) {
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return 'https://' + url;
+      }
+      return url;
+    }
+
+    function checkUrlDirectly(url) {
+      // 模拟原函数中的验证逻辑
+      try {
+        // 如果已经有 https://或 http://前缀，直接返回 true
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+          return '✅ 已包含协议，视为有效';
+        }
+
+        // 尝试添加 http://前缀后再验证
+        const urlWithProtocol = url.startsWith('http') ? url : 'http://' + url;
+        const regex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?$/;
+        const isValid = regex.test(urlWithProtocol);
+        return isValid ? '✅ 通过正则验证' : '❌ 未通过正则验证';
+      } catch (e) {
+        return '❌ 错误：' + e.message;
+      }
+    }
+
+    // ICS 解析器测试
+    function loadHDUSample() {
+      const sampleICS = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//HDUHELP//杭电助手课表//CN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:课表
+X-WR-TIMEZONE:Asia/Shanghai
+BEGIN:VTIMEZONE
+TZID:Asia/Shanghai
+BEGIN:STANDARD
+DTSTART:19890917T020000
+TZNAME:GMT+8
+TZOFFSETFROM:+0800
+TZOFFSETTO:+0800
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:schedule-v2-d5a6b8abedbf01097dbe5fb9447a2b72@hduhelp
+DTSTAMP:20260911T152728Z
+DTSTART;TZID=Asia/Shanghai:20261116T080500
+DTEND;TZID=Asia/Shanghai:20261116T104500
+SUMMARY:C 语言程序设计
+LOCATION:正心楼 515
+DESCRIPTION:授课老师：韦学辉\\nCreated by HDUHELP 杭电助手
+END:VEVENT
+BEGIN:VEVENT
+UID:schedule-v2-9d8a9e4b2208968d6c6a01110d5aee0b@hduhelp
+DTSTAMP:20260911T152728Z
+DTSTART;TZID=Asia/Shanghai:20261117T133000
+DTEND;TZID=Asia/Shanghai:20261117T150500
+SUMMARY:大学英语 A
+LOCATION:正心楼 206
+DESCRIPTION:授课老师：查相宜\\nCreated by HDUHELP 杭电助手
+END:VEVENT
+BEGIN:VEVENT
+UID:schedule-v2-224cd5e1347e3b08ee3b8d2ab3b99300@hduhelp
+DTSTAMP:20260911T152728Z
+DTSTART;TZID=Asia/Shanghai:20261118T183000
+DTEND;TZID=Asia/Shanghai:20261118T205500
+SUMMARY:高等数学 A1
+LOCATION:正心楼 518
+DESCRIPTION:授课老师：黄海\\nCreated by HDUHELP 杭电助手
+END:VEVENT
+END:VCALENDAR`;
+
+      document.getElementById('icsInput').value = sampleICS;
+      document.getElementById('icsResult').innerHTML = '✅ 已加载 HDU 示例数据，点击 "解析 ICS 内容" 按钮进行测试';
+    }
+
+    function testICSParser() {
+      const text = document.getElementById('icsInput').value;
+      const resultDiv = document.getElementById('icsResult');
+
+      if (!text.trim()) {
+        resultDiv.innerHTML = '<span class="error">❌ 请输入 ICS 内容</span>';
+        return;
+      }
+
+      try {
+        console.log('开始解析 ICS 内容...');
+        const courses = ScheduleManager.parseICSContent(text);
+
+        let output = `<strong>解析成功!</strong> ✅<br><br>`;
+        output += `<strong>共识别到 ${courses.length} 门课程</strong><br><br>`;
+
+        if (courses.length > 0) {
+          output += `<strong>课程列表:</strong><br>`;
+          courses.forEach((course, index) => {
+            output += `\n${index + 1}. ${course.name}`;
+            output += `\n   📅 星期${['日','一','二','三','四','五','六'][course.day - 1] || course.day}`;
+            output += `\n   ⏰ ${course.startTime} - ${course.endTime}`;
+            output += `\n   📍 ${course.location || '未知'}`;
+            output += `\n   👨‍🏫 ${course.teacher || '未知'}`;
+          });
+        } else {
+          output += '\n\n<span class="warning">⚠️ 未识别到任何课程，请检查 ICS 格式是否正确</span>';
+        }
+
+        resultDiv.innerHTML = output;
+
+      } catch (error) {
+        resultDiv.innerHTML = `<span class="error">❌ 解析失败：${error.message}</span>`;
+        console.error('解析错误:', error);
+      }
+    }
+
+    // 完整流程测试
+    async function runFullTest() {
+      const url = document.getElementById('fullUrlInput').value.trim();
+      const resultDiv = document.getElementById('fullResult');
+
+      resultDiv.innerHTML = '<span class="warning">🔄 开始测试...</span>';
+
+      try {
+        // Step 1: URL 验证
+        resultDiv.innerHTML += '<p><strong>步骤 1/3:</strong> 验证 URL...</p>';
+        if (!isValidURL(url)) {
+          resultDiv.innerHTML += `<p><span class="error">❌ URL 验证失败：${url}</span></p>`;
+          return;
+        }
+        resultDiv.innerHTML += '<p><span class="success">✅ URL 有效</span></p>';
+
+        // Step 2: Fetch 内容
+        resultDiv.innerHTML += '<p><strong>步骤 2/3:</strong> 获取远程内容...</p>';
+        let response;
+        try {
+          // 尝试直接 fetch（可能遇到 CORS 问题）
+          response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+        } catch (e) {
+          resultDiv.innerHTML += `<p><span class="warning">⚠️ 无法直接获取内容 (${e.message})，这可能是 CORS 限制或网络问题</span></p>`;
+          resultDiv.innerHTML += '<p>提示：请在实际应用中通过后端代理 /api/fetch-ics 来获取内容</p>';
+          resultDiv.innerHTML += '<p><strong>现在使用示例数据进行演示:</strong></p>';
+
+          // 使用示例数据继续演示
+          const sampleICS = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//HDUHELP//杭电助手课表//CN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+DTSTAMP:20260911T152728Z
+DTSTART;TZID=Asia/Shanghai:20261116T080500
+DTEND;TZID=Asia/Shanghai:20261116T104500
+SUMMARY:C 语言程序设计
+LOCATION:正心楼 515
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20260911T152728Z
+DTSTART;TZID=Asia/Shanghai:20261117T133000
+DTEND;TZID=Asia/Shanghai:20261117T150500
+SUMMARY:大学英语 A
+LOCATION:正心楼 206
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20260911T152728Z
+DTSTART;TZID=Asia/Shanghai:20261118T183000
+DTEND;TZID=Asia/Shanghai:20261118T205500
+SUMMARY:高等数学 A1
+LOCATION:正心楼 518
+END:VEVENT
+END:VCALENDAR`;
+          const courses = ScheduleManager.parseICSContent(sampleICS);
+          resultDiv.innerHTML += `<p><strong>解析结果:</strong> ${courses.length} 门课程</p>`;
+          if (courses.length > 0) {
+            resultDiv.innerHTML += '<p><strong>课程预览:</strong></p><ul>';
+            courses.forEach(c => {
+              resultDiv.innerHTML += `<li>${c.name} - ${c.startTime}-${c.endTime} @ ${c.location}</li>`;
+            });
+            resultDiv.innerHTML += '</ul>';
+          }
+        }
+
+      } catch (error) {
+        resultDiv.innerHTML += `<p><span class="error">❌ 测试失败：${error.message}</span></p>`;
+      }
+    }
+
+    function clearResults() {
+      document.getElementById('urlResult').innerHTML = '';
+      document.getElementById('icsResult').innerHTML = '';
+      document.getElementById('fullResult').innerHTML = '';
+    }
+
+    // 页面加载时自动测试当前 URL
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('页面加载完成，准备测试...');
+      testURLValidation();
+    });
+  </script>
+</body>
+</html>

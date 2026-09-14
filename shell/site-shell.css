@@ -1,0 +1,196 @@
+/* ============================================================================
+   CampusVerse · 双界校园 —— 模块页统一外壳样式
+   由 server.js 自动注入到四个模块的入口页，形成"总站 ⇄ 模块"闭环。
+   命名统一前缀 cvshell-，避免与各模块自身样式冲突。
+   ============================================================================ */
+
+.cvshell-rail,
+.cvshell-rail * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
+}
+
+.cvshell-rail {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2147483000;
+
+  display: flex;
+  align-items: stretch;
+
+  background: rgba(18, 26, 58, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(120, 160, 255, 0.28);
+  border-left: none;
+  border-radius: 0 16px 16px 0;
+  box-shadow: 0 12px 36px rgba(10, 18, 48, 0.35);
+  color: #e8ecff;
+
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s ease;
+  overflow: hidden;
+  max-width: 92vw;
+}
+
+/* ---------- 折叠态：一条竖排"把手" ---------- */
+.cvshell-handle {
+  flex: 0 0 42px;
+  width: 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 0;
+  cursor: pointer;
+  background: linear-gradient(160deg, #1a2a5e 0%, #3a7bc8 100%);
+  color: #fff;
+  border: none;
+  outline: none;
+}
+
+.cvshell-handle:focus-visible {
+  box-shadow: inset 0 0 0 2px #9dc4ff;
+}
+
+.cvshell-handle-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.cvshell-handle-text {
+  writing-mode: vertical-rl;
+  letter-spacing: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* ---------- 展开态：导航面板 ---------- */
+.cvshell-panel {
+  width: 0;
+  opacity: 0;
+  padding: 14px 0;
+  transition: opacity 0.22s ease, width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cvshell-rail.is-open {
+  box-shadow: 0 18px 48px rgba(10, 18, 48, 0.5);
+}
+
+.cvshell-rail.is-open .cvshell-panel {
+  width: 208px;
+  opacity: 1;
+  padding: 14px 14px 14px 10px;
+}
+
+.cvshell-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #9db4e8;
+  padding: 0 6px 8px;
+  border-bottom: 1px solid rgba(120, 160, 255, 0.18);
+  white-space: nowrap;
+}
+
+.cvshell-title b {
+  display: block;
+  font-size: 14px;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.cvshell-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cvshell-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #cfd9f5;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.cvshell-item:hover {
+  background: rgba(107, 165, 231, 0.18);
+  color: #fff;
+  transform: translateX(2px);
+}
+
+.cvshell-item.is-current {
+  background: linear-gradient(90deg, rgba(74, 144, 217, 0.35), rgba(58, 123, 200, 0.12));
+  color: #fff;
+  font-weight: 600;
+  box-shadow: inset 2px 0 0 #6ba5e7;
+}
+
+.cvshell-item-icon {
+  font-size: 15px;
+  width: 18px;
+  text-align: center;
+}
+
+.cvshell-item-tag {
+  margin-left: auto;
+  font-size: 10px;
+  color: #8fa6d8;
+  border: 1px solid rgba(143, 166, 216, 0.4);
+  border-radius: 6px;
+  padding: 0 5px;
+}
+
+.cvshell-sep {
+  height: 1px;
+  background: rgba(120, 160, 255, 0.18);
+  margin: 2px 6px;
+}
+
+.cvshell-foot {
+  font-size: 11px;
+  color: #8fa6d8;
+  padding: 4px 10px 0;
+  white-space: nowrap;
+}
+
+/* 窄屏：面板更窄，把手更小，避免遮挡手机端底部导航 */
+@media (max-width: 640px) {
+  .cvshell-handle {
+    flex-basis: 34px;
+    width: 34px;
+    padding: 10px 0;
+  }
+  .cvshell-rail.is-open .cvshell-panel {
+    width: 168px;
+  }
+  .cvshell-item {
+    font-size: 12px;
+    padding: 7px 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cvshell-rail,
+  .cvshell-panel,
+  .cvshell-item {
+    transition: none;
+  }
+}

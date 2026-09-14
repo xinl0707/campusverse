@@ -1,0 +1,56 @@
+:root {
+  /* 🎨 明亮色调配色方案 */
+  --primary-color: #667eea;      /* 主色调 - 渐变紫 */
+  --primary-light: #764ba2;      /* 浅紫色 */
+  --primary-dark: #5a67d8;       /* 深蓝紫色 */
+  --accent-color: #ff6b6b;       /* 强调色 - 珊瑚红 */
+  --success-color: #51cf66;      /* 成功色 - 清新绿 */
+  --warning-color: #ffd43b;      /* 警告色 - 活力黄 */
+  --info-color: #17c964;         /* 信息色 - 薄荷绿 */
+
+  /* 背景与文字 */
+  --bg-body: #f7f9fc;            /* 页面背景 - 超浅灰蓝 */
+  --bg-card: #ffffff;            /* 卡片背景 */
+  --bg-sidebar: #edf2f9;         /* 侧边栏背景 */
+  --text-main: #2d3748;          /* 主文字 */
+  --text-sub: #718096;           /* 次要文字 */
+  --text-light: #a0aec0;         /* 浅色文字 */
+  --border: #e2e8f0;             /* 边框色 */
+
+  /* 特殊状态颜色 */
+  --early-morning: #ff9a9e;      /* 早八预警 */
+  --late-night: #a18cd1;         /* 晚间满课 */
+  --fragment: #fad0c4;           /* 碎片时间 */
+  --high-weight: #ffecd2;        /* 高分必修 */
+
+  /* 空间与阴影 */
+  --radius-card: 16px;           /* 卡片圆角 */
+  --radius-btn: 8px;             /* 按钮圆角 */
+  --radius-input: 6px;           /* 输入框圆角 */
+  --shadow-elevation: 0 4px 6px rgba(0,0,0,0.05);
+  --shadow-md: 0 10px 25px rgba(0,0,0,0.08);
+  --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
+
+  /* 字体 */
+  --font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+
+  /* 动画 */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.2s ease;
+}
+
+/* 🌈 视觉降级预案（图片加载失败兜底） */
+.bg-gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.bg-gradient-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.bg-gradient-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.bg-gradient-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.bg-gradient-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.bg-gradient-6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+.bg-gradient-7 { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+.bg-gradient-8 { background: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%); }

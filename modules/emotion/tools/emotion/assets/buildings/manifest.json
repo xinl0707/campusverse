@@ -1,0 +1,44 @@
+[
+  {
+    "key": "gate",
+    "name": "gate.png",
+    "width": 620,
+    "height": 377,
+    "ratio": 1.6446
+  },
+  {
+    "key": "teaching",
+    "name": "teaching.png",
+    "width": 720,
+    "height": 418,
+    "ratio": 1.7225
+  },
+  {
+    "key": "library",
+    "name": "library.png",
+    "width": 640,
+    "height": 443,
+    "ratio": 1.4447
+  },
+  {
+    "key": "dorm",
+    "name": "dorm.png",
+    "width": 560,
+    "height": 297,
+    "ratio": 1.8855
+  },
+  {
+    "key": "canteen",
+    "name": "canteen.png",
+    "width": 600,
+    "height": 410,
+    "ratio": 1.4634
+  },
+  {
+    "key": "playground",
+    "name": "playground.png",
+    "width": 900,
+    "height": 522,
+    "ratio": 1.7241
+  }
+]

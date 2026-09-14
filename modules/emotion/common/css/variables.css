@@ -1,0 +1,50 @@
+/* ========================================
+   全局设计变量 - 黑客松项目
+   ======================================== */
+
+:root {
+  /* ---- 配色 ---- */
+  --primary-color: #4A90D9;        /* 主色调 - 校园蓝 */
+  --primary-light: #6BA5E7;        /* 浅蓝 */
+  --primary-dark: #3A7BC8;         /* 深蓝 */
+  --accent-color: #FF6B6B;         /* 强调色 - 红 */
+  --success-color: #51CF66;        /* 成功色 - 绿 */
+  --warning-color: #FFD43B;        /* 警告色 - 黄 */
+
+  /* ---- 情绪5级配色 ---- */
+  --mood-happy: #51CF66;           /* 开心 - 绿 */
+  --mood-calm: #4A90D9;            /* 平静 - 蓝 */
+  --mood-neutral: #FFD43B;         /* 一般 - 黄 */
+  --mood-anxious: #FF922B;         /* 焦虑 - 橙 */
+  --mood-sad: #FF6B6B;             /* 低落 - 红 */
+
+  /* ---- 情绪对应天气图标 ---- */
+  --weather-happy: "☀️";
+  --weather-calm: "⛅";
+  --weather-neutral: "🌤️";
+  --weather-anxious: "🌧️";
+  --weather-sad: "⛈️";
+
+  /* ---- 背景与文字 ---- */
+  --bg-body: #F7F9FC;              /* 页面背景 */
+  --card-bg: #FFFFFF;              /* 卡片背景 */
+  --text-main: #2D3748;            /* 主文字 */
+  --text-sub: #718096;             /* 次要文字 */
+  --border: #E5E7EB;               /* 边框色 */
+
+  /* ---- 空间与阴影 ---- */
+  --radius-card: 16px;             /* 卡片圆角 */
+  --radius-btn: 8px;               /* 按钮圆角 */
+  --shadow-elevation: 0 10px 20px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+  /* ---- 字体 ---- */
+  --font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+
+  /* ---- 动画 ---- */
+  --transition: all 0.3s ease;
+}
